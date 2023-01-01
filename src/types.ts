@@ -7,7 +7,7 @@ export type DeepPartial<T> = {
 
 export type NonFunctionPropertyNames<T> = {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  [K in keyof T]: T[K] extends Function ? never : K;
+  [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
 }[keyof T];
 
 /**
@@ -25,22 +25,15 @@ export interface ObjectLiteral {
 /**
  * Makes an interface with all optional values to require AT LEAST one of them.
  */
-export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<
-  T,
-  Exclude<keyof T, Keys>
-> &
+export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
   {
     [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
   }[Keys];
 
 /* Makes an interface with all optional values to accept ONLY one of them */
-export type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
-  T,
-  Exclude<keyof T, Keys>
-> &
+export type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
   {
-    [K in Keys]-?: Required<Pick<T, K>> &
-      Partial<Record<Exclude<Keys, K>, undefined>>;
+    [K in Keys]-?: Required<Pick<T, K>> & Partial<Record<Exclude<Keys, K>, undefined>>;
   }[Keys];
 
 export type Nullable<T> = T | null;
@@ -59,4 +52,4 @@ export type CachedType<T> = T & {
   insertAt: Date | number;
 };
 
-export type ContainIterable = Array<unknown> | Set<unknown>;
+export type ContainIterable = unknown[] | Set<unknown>;
